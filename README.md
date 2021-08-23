@@ -1,4 +1,4 @@
-# Datadog Interview
+# CLI Application Template
 
 ## Compile and Run Tests
 
@@ -27,33 +27,16 @@
 ### Print Help and usage
 ```sh
 ./run.sh --help
-./run.sh monitor --help
+./run.sh hello-world --help
 ```
+### Usage
 
-### Monitor the HTTP access logs
-
-The below example monitors the file `src/test/resources/http_access_log.csv` and configures alerts to be 
-triggered if sections hits exceed `120`
-
-.Read from File
+.Hello World!
 ```sh
-./run.sh monitor -t 120 src/test/resources/http_access_log.csv
+./run.sh hello-world
 ```
 
-.Read from Standard Input
+.Hello {name}!
 ```sh
-cat src/test/resources/http_access_log.csv | ./run.sh monitor -t 120 -
+./run.sh hello-world Brian
 ```
-
-## Synopsis
-
-### Total Time Spent
-- 3 hours 30 mins (not including some external interruptions).
-- Spent a little extra time troubleshooting IDE issues in addition to native image compilation
-
-### With More Time I would have...
-
-- refactored the code to be a bit more modular, and testable 
-- improved the test coverage to be between 90% and 100%
-- expanded upon the documentation and Javadocs
-- run some benchmarks and larger file scenarios to gauge performance under load
