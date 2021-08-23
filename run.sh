@@ -1,16 +1,16 @@
 #!/bin/bash
 
 # First check for native image
-if [ -f target/interview ];
+if [ -f target/cli ];
 then
-  ./target/interview "$@"
+  ./target/cli "$@"
   exit 0
 fi
 
 # Then check for executable jar
-if compgen -G "target/interview-*-shaded.jar" > /dev/null;
+if compgen -G "target/cli-*-shaded.jar" > /dev/null;
 then
-  java -jar target/interview-*-shaded.jar "$@"
+  java -jar target/cli-*-shaded.jar "$@"
   exit 0
 fi
 

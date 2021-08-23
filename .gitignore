@@ -5,6 +5,7 @@
 .factorypath
 .project
 .settings
+.vscode
 
 # Build
 target
