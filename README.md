@@ -1,6 +1,6 @@
 # Java Maven CLI Template
 
-This is a template repository for building Picolcli CLI applications with Java built with Maven.
+This is a template repository for building Picocli CLI applications with Java built with Maven.
 
 ## Compile and Run Tests
 
@@ -18,6 +18,11 @@ This is a template repository for building Picolcli CLI applications with Java b
 - GraalVM CE
 - GraalVM CE `native-image`
 - `zlib`
+
+##### Auto Setup
+```sh
+./setup.sh
+```
 
 ##### GraalVM and Native Image Installation Instructions
 - https://www.graalvm.org/docs/getting-started/linux/

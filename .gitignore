@@ -8,6 +8,7 @@
 .vscode
 
 # Build
+.setup
 target
 
 # Generated
