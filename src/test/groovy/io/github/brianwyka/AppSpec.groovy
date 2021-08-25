@@ -1,4 +1,4 @@
-package io.brianwyka.service
+package io.github.brianwyka
 
 import spock.lang.Specification
 

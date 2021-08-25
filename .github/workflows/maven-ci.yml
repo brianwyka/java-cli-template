@@ -34,12 +34,12 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 11
-      - name: Setup GraalVM
-        uses: DeLaGuardo/setup-graalvm@master
+      - name: Set GraalVM and Native Image
+        uses: ayltai/setup-graalvm@v1
         with:
-          graalvm-version: 21.2.0.java11
-      - name: Setup GraalVM Native Image Tool
-        run: gu install native-image
+          java-version: 11
+          graalvm-version: 21.2.0
+          native-image: true
       - name: Set Maven Project Version
         shell: bash
         run: |
@@ -51,7 +51,15 @@ jobs:
       - name: Smoke Test
         if: success()
         working-directory: target
-        run: ./cli help
+        run: ./app help
+      - name: Publish Github Pages
+        if: success()
+        continue-on-error: true
+        uses: jamesives/github-pages-deploy-action@4.1.4
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: gh-pages
+          FOLDER: gh-pages
       - name: Publish Test Report
         if: always()
         continue-on-error: true

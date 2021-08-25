@@ -1,0 +1,30 @@
+:stylesheet: style.css
+:doctype: book
+:toc: left
+:toclevels: 2
+:sectanchors:
+:numbered:
+:sectnumlevels: 2
+:generateddocs: ../../../target/generated-docs
+
+= CLI App Template
+Brian Wyka
+
+'''
+
+.Description
+****
+Lorem ipsum...
+****
+
+'''
+
+== Commands
+
+include::{generateddocs}/app.adoc[leveloffset=2,tag=picocli-generated-full-manpage]
+
+'''
+
+include::{generateddocs}/app-hello-world.adoc[leveloffset=2,tag=picocli-generated-full-manpage]
+
+'''

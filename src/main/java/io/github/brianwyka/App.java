@@ -1,6 +1,6 @@
-package io.brianwyka;
+package io.github.brianwyka;
 
-import io.brianwyka.command.HelloWorld;
+import io.github.brianwyka.command.HelloWorld;
 import lombok.val;
 import picocli.CommandLine;
 

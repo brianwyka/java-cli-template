@@ -1,16 +1,16 @@
 #!/bin/bash
 
 # First check for native image
-if [ -f target/cli ];
+if [ -f target/app ];
 then
-  ./target/cli "$@"
+  ./target/app "$@"
   exit 0
 fi
 
 # Then check for executable jar
-if compgen -G "target/cli-*-shaded.jar" > /dev/null;
+if compgen -G "target/java-maven-cli-template-*-shaded.jar" > /dev/null;
 then
-  java -jar target/cli-*-shaded.jar "$@"
+  java -jar target/java-maven-cli-template-*-shaded.jar "$@"
   exit 0
 fi
 

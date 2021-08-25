@@ -1,4 +1,6 @@
-# CLI Application Template
+# Java Maven CLI Template
+
+This is a template repository for building Picolcli CLI applications with Java built with Maven.
 
 ## Compile and Run Tests
 
@@ -31,12 +33,12 @@
 ```
 ### Usage
 
-.Hello World!
+Hello World!
 ```sh
 ./run.sh hello-world
 ```
 
-.Hello {name}!
+Hello {name}!
 ```sh
 ./run.sh hello-world Brian
 ```

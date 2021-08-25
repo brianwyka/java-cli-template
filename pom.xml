@@ -5,8 +5,8 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.brianwyka</groupId>
-    <artifactId>cli</artifactId>
+    <groupId>io.github.brianwyka</groupId>
+    <artifactId>java-maven-cli-template</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
@@ -18,9 +18,11 @@
         <java.version>11</java.version>
         <groovy.version>3.0.8</groovy.version>
         <lombok.version>1.18.20</lombok.version>
+        <slf4j.version>1.7.31</slf4j.version>
         <graalvm.version>21.2.0</graalvm.version>
         <picocli.version>4.6.1</picocli.version>
-        <main.class>io.brianwyka.App</main.class>
+        <main.class>io.github.brianwyka.App</main.class>
+        <cli.name>app</cli.name>
     </properties>
 
     <dependencies>
@@ -45,7 +47,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.31</version>
+            <version>${slf4j.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -101,6 +103,127 @@
             </plugins>
         </pluginManagement>
         <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>generate-manpage-asciidocs</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <includeProjectDependencies>true</includeProjectDependencies>
+                            <includePluginDependencies>true</includePluginDependencies>
+                            <mainClass>picocli.codegen.docgen.manpage.ManPageGenerator</mainClass>
+                            <arguments>
+                                <argument>--outdir=${project.build.directory}/generated-docs</argument>
+                                <argument>${main.class}</argument>
+                                <argument>io.github.brianwyka.command.HelloWorld</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-bash-completion-script</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <includeProjectDependencies>true</includeProjectDependencies>
+                            <includePluginDependencies>true</includePluginDependencies>
+                            <mainClass>picocli.AutoComplete</mainClass>
+                            <systemProperties>
+                                <systemProperty>
+                                    <key>picocli.autocomplete.systemExitOnError</key>
+                                </systemProperty>
+                            </systemProperties>
+                            <arguments>
+                                <argument>--force</argument>
+                                <argument>--completionScript</argument>
+                                <argument>${project.build.directory}/${cli.name}-bash-completion.sh</argument>
+                                <argument>${main.class}</argument>
+                            </arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+                <dependencies>
+                    <dependency>
+                        <groupId>info.picocli</groupId>
+                        <artifactId>picocli-codegen</artifactId>
+                        <version>${picocli.version}</version>
+                        <type>jar</type>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-bash-completion-script-artifact</id>
+                        <goals>
+                            <goal>attach-artifact</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <artifacts>
+                                <artifact>
+                                    <file>${project.build.directory}/${cli.name}-bash-completion.sh</file>
+                                    <classifier>bash-completion</classifier>
+                                    <type>sh</type>
+                                </artifact>
+                            </artifacts>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.asciidoctor</groupId>
+                <artifactId>asciidoctor-maven-plugin</artifactId>
+                <version>2.1.0</version>
+                <executions>
+                    <execution>
+                        <id>generate-manpage-html</id>
+                        <goals>
+                            <goal>process-asciidoc</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                        <configuration>
+                            <attributes>
+                                <source-highlighter>coderay</source-highlighter>
+                            </attributes>
+                            <backend>html5</backend>
+                            <sourceDirectory>${project.basedir}/src/main/asciidoc</sourceDirectory>
+                            <sourceDocumentName>index.adoc</sourceDocumentName>
+                            <outputDirectory>${project.basedir}/gh-pages</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>generate-manpage</id>
+                        <goals>
+                            <goal>process-asciidoc</goal>
+                        </goals>
+                        <phase>process-classes</phase>
+                        <configuration>
+                            <attributes>
+                                <source-highlighter>coderay</source-highlighter>
+                            </attributes>
+                            <backend>manpage</backend>
+                            <sourceDirectory>${project.build.directory}/generated-docs</sourceDirectory>
+                            <outputDirectory>${project.basedir}/gh-pages/manpages</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+                <configuration>
+                    <attributes>
+                        <revnumber>${project.version}</revnumber>
+                    </attributes>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.gmavenplus</groupId>
                 <artifactId>gmavenplus-plugin</artifactId>
@@ -246,7 +369,7 @@
                             </execution>
                         </executions>
                         <configuration>
-                            <imageName>${project.artifactId}</imageName>
+                            <imageName>${cli.name}</imageName>
                             <buildArgs>-H:+ReportExceptionStackTraces --allow-incomplete-classpath</buildArgs>
                         </configuration>
                     </plugin>

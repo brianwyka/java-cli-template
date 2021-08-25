@@ -1,4 +1,4 @@
-package io.brianwyka.command;
+package io.github.brianwyka.command;
 
 import java.util.concurrent.Callable;
 
