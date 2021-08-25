@@ -1,0 +1,61 @@
+name: Maven CI
+on:
+  push:
+    branches:
+      - main
+      - 'releases/[1-9]+.[0-9]+.x'
+    paths-ignore:
+      - '.github/**'
+      - '.gitignore'
+      - 'CONTRIBUTING.md'
+      - 'LICENSE'
+      - '**/README.md'
+  pull_request:
+    branches:
+      - main
+      - 'releases/[1-9]+.[0-9]+.x'
+    paths-ignore:
+      - '.github/**'
+      - '.gitignore'
+      - 'CONTRIBUTING.md'
+      - 'LICENSE'
+      - '**/README.md'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/cache@v1
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Setup Java and Maven
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Setup GraalVM
+        uses: DeLaGuardo/setup-graalvm@master
+        with:
+          graalvm-version: 21.2.0.java11
+      - name: Setup GraalVM Native Image Tool
+        run: gu install native-image
+      - name: Set Maven Project Version
+        shell: bash
+        run: |
+          BUILD_VERSION=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout | tail -1 | tr -d '\r\n')
+          [[ "$BUILD_VERSION" != *"-SNAPSHOT" ]] && BUILD_VERSION="${BUILD_VERSION}-SNAPSHOT" && ./mvnw --batch-mode versions:set -DnewVersion=$BUILD_VERSION || true
+      - name: Build Maven Project
+        if: success() && (github.event_name == 'pull_request' || (github.event_name == 'push' && matrix.java != '8'))
+        run: ./mvnw --batch-mode install -D ci.build -D native.image
+      - name: Smoke Test
+        if: success()
+        working-directory: target
+        run: ./cli help
+      - name: Publish Test Report
+        if: always()
+        continue-on-error: true
+        uses: scacap/action-surefire-report@v1
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          report_paths: '**/target/surefire-reports/TEST-*.xml,**/target/failsafe-reports/TEST-*.xml'
