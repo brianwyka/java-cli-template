@@ -17,6 +17,7 @@ import picocli.CommandLine;
         footer = "(c) Brian Wyka",
         mixinStandardHelpOptions = true,
         subcommands = {
+                CommandLine.HelpCommand.class,
                 HelloWorld.class
         }
 )

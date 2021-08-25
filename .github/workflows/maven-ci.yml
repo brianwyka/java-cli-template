@@ -24,8 +24,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/cache@v1
+      - name: Checkout Source Code
+        uses: actions/checkout@v2
+      - name: Setup Maven Dependencies Cache
+        uses: actions/cache@v1
         with:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
@@ -43,15 +45,17 @@ jobs:
       - name: Set Maven Project Version
         shell: bash
         run: |
-          BUILD_VERSION=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout | tail -1 | tr -d '\r\n')
-          [[ "$BUILD_VERSION" != *"-SNAPSHOT" ]] && BUILD_VERSION="${BUILD_VERSION}-SNAPSHOT" && ./mvnw --batch-mode versions:set -DnewVersion=$BUILD_VERSION || true
+          BUILD_VERSION=$(./mvnw help:evaluate -Dexpression=project.version -q -D forceStdout | tail -1 | tr -d '\r\n')
+          [[ "$BUILD_VERSION" != *"-SNAPSHOT" ]] && BUILD_VERSION="${BUILD_VERSION}-SNAPSHOT" && ./mvnw --batch-mode org.codehaus.mojo:versions-maven-plugin:2.8.1:versions:set -D generateBackupPoms=false -D updateMatchingVersions=false -D processAllModules=true -D newVersion=$BUILD_VERSION || true
       - name: Build Maven Project
         if: success() && (github.event_name == 'pull_request' || (github.event_name == 'push' && matrix.java != '8'))
         run: ./mvnw --batch-mode install -D ci.build -D native.image
       - name: Smoke Test
         if: success()
         working-directory: target
-        run: ./app help
+        run: |
+          CLI_NAME=$(./mvnw help:evaluate -Dexpression=cli.name -q -D forceStdout | tail -1 | tr -d '\r\n')
+          ./"$CLI_NAME" help
       - name: Publish Github Pages
         if: success()
         continue-on-error: true
