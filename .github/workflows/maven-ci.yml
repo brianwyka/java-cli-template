@@ -52,10 +52,7 @@ jobs:
         run: ./mvnw --batch-mode install -D ci.build -D native.image
       - name: Smoke Test
         if: success()
-        working-directory: target
-        run: |
-          CLI_NAME=$(./mvnw help:evaluate -Dexpression=cli.name -q -D forceStdout | tail -1 | tr -d '\r\n')
-          ./"$CLI_NAME" help
+        run: ./run.sh help
       - name: Publish Github Pages
         if: success()
         continue-on-error: true
