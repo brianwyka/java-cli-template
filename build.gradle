@@ -1,0 +1,73 @@
+
+group 'io.github.brianwyka'
+name 'java-cli-template'
+version '0.1.0-SNAPSHOT'
+
+wrapper {
+    gradleVersion = '7.2'
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
+
+configurations {
+    generateConfig
+}
+
+dependencies {
+    compileOnly "org.projectlombok:lombok:${lombok.version}"
+    runtimeOnly "ch.qos.logback:logback-classic:1.2.6"
+    implemenation "org.slf4j:slf4j-api:${slf4j.version}"
+    annotationProcessor "org.projectlombok:lombok:${lombok.version}"
+    annotationProcessor "info.picocli:picocli-codegen:${picocli.version}"
+    generateConfig "info.picocli:picocli-codegen:${picocli.version}"
+}
+
+dependencies {
+    testImplementation "org.codehaus.groovy:groovy:${groovy.version}"
+    testImplementation platform("org.spockframework:spock-bom:${spock.version}")
+    testImplementation "org.spockframework:spock-core"
+}
+
+compileJava {
+    options.compilerArgs += ["-Aproject=${project.group}/${project.name}"]
+}
+
+test {
+    useJUnitPlatform()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
+
+plugins {
+    id 'java'
+    id 'groovy'
+    id 'org.asciidoctor.jvm.convert'
+    id 'com.palantir.graal' version '0.6.0'
+}
+
+task generateManpageAsciiDoc(type: JavaExec) {
+    dependsOn(classes)
+    group = "Documentation"
+    description = "Generate AsciiDoc manpage"
+    classpath(configurations.compile, configurations.annotationProcessor, sourceSets.main.runtimeClasspath)
+    main 'picocli.codegen.docgen.manpage.ManPageGenerator'
+    args mainClassName, "--outdir=${project.dir}/generated-picocli-docs", "-v"
+}
+
+apply plugin: 'org.asciidoctor.jvm.convert'
+asciidoctor {
+    dependsOn(generateManpageAsciiDoc)
+    sourceDir = file("${project.buildDir}/generated-picocli-docs")
+    outputDir = file("${project.dir}/gh-pages")
+    logDocuments = true
+    outputOptions {
+        backends = ['manpage', 'html5']
+    }
+}

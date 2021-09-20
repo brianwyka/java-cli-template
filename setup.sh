@@ -50,26 +50,37 @@ else
 fi
 
 ## Install
-if [[ ! -d "/opt/graalvm/$BUILD_NAME" ]]
+if [[ "$OS" == "linux" ]]
 then
-  echo "Installing $FILE_NAME to /opt/graalvm ..."
-  sudo mkdir -p /opt/graalvm
-  sudo mv "$BUILD_NAME" /opt/graalvm || die "Failed to move GraalVM to /opt/graalvm"
-  echo $?
-else
-  echo "Skipping GraalVM install"
-fi
-
-## Install GraalVM Native Image
-if [[ ! -f "/opt/graalvm/$BUILD_NAME/bin/native-image" ]]
+  if [[ ! -d "/opt/graalvm/$BUILD_NAME" ]]
+  then
+    echo "Installing $FILE_NAME to /opt/graalvm ..."
+    sudo mkdir -p /opt/graalvm
+    sudo mv "$BUILD_NAME" /opt/graalvm || die "Failed to move GraalVM to /opt/graalvm"
+  else
+    echo "Skipping GraalVM install"
+  fi
+elif [[ "$OS" == "darwin" ]]
 then
-  echo "Installing GraalVM native-image tool ..."
-  "/opt/graalvm/$BUILD_NAME/bin/gu" install native-image || die "Failed to install native-image tool"
+  if [[ ! -d "/Library/Java/JavaVirtualMachines/$BUILD_NAME" ]]
+    then
+      echo "Installing $FILE_NAME to /Library/Java/JavaVirtualMachines ..."
+      sudo mkdir -p /Library/Java/JavaVirtualMachines
+      sudo mv "$BUILD_NAME" /Library/Java/JavaVirtualMachines || die "Failed to move GraalVM to /Library/Java/JavaVirtualMachines"
+    else
+      echo "Skipping GraalVM install"
+    fi
 else
-  echo "Skipping GraalVM native-image install"
+  die
 fi
 
 ## Show User Further Instructions
 echo "Please complete the following manual tasks:"
-echo " > Set JAVA_HOME environment variable to \"/opt/graalvm/$BUILD_NAME\""
+if [[ "$OS" == "linux" ]]
+then
+  echo " > Set JAVA_HOME environment variable to \"/opt/graalvm/$BUILD_NAME\""
+elif [[ "$OS" == "darwin" ]]
+then
+  echo " > Set JAVA_HOME environment variable to \"/Library/Java/JavaVirtualMachines/$BUILD_NAME\""
+fi
 echo " > Add \"\$JAVA_HOME/bin\" to your \$PATH variable if not already added"

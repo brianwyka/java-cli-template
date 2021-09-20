@@ -33,6 +33,8 @@ sed -i 's/public\sclass\sCommandLine/@SuppressWarnings({"rawtypes", "deprecation
 # Replace the version in pom.xml file for plugin references
 sed -i "s/<picocli.version>[-[:alnum:]./]\{1,\}<\/picocli.version>/<picocli.version>$VERSION<\/picocli.version>/" "$DIR/pom.xml"
 
+# TODO: mac and gradle
+
 # Remove TODOs so not highlighted in editor
 sed -i 's/TODO/TIDO/g' "$SOURCE_FILE_PATH"
 
