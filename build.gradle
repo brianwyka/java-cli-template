@@ -1,36 +1,51 @@
+import org.gradle.nativeplatform.platform.internal.DefaultNativePlatform
 
-group 'io.github.brianwyka'
-name 'java-cli-template'
-version '0.1.0-SNAPSHOT'
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.asciidoctor:asciidoctor-gradle-jvm:3.3.2"
+    }
+}
+
+plugins {
+    id 'application'
+    id 'java'
+    id 'groovy'
+    id 'org.asciidoctor.jvm.convert'
+    id 'com.palantir.graal'
+}
+apply plugin: 'org.asciidoctor.jvm.convert'
 
 wrapper {
     gradleVersion = '7.2'
 }
+
+group 'io.github.brianwyka'
+
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
 
 repositories {
     mavenLocal()
     mavenCentral()
 }
 
-sourceCompatibility = JavaVersion.VERSION_11
-targetCompatibility = JavaVersion.VERSION_11
-
-configurations {
-    generateConfig
+dependencies {
+    compileOnly "org.projectlombok:lombok:${lombokVersion}"
+    runtimeOnly "ch.qos.logback:logback-classic:${logbackVersion}"
+    implementation "org.slf4j:slf4j-api:${slf4jVersion}"
+    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+    annotationProcessor "info.picocli:picocli-codegen:${picocliVersion}"
 }
 
 dependencies {
-    compileOnly "org.projectlombok:lombok:${lombok.version}"
-    runtimeOnly "ch.qos.logback:logback-classic:1.2.6"
-    implemenation "org.slf4j:slf4j-api:${slf4j.version}"
-    annotationProcessor "org.projectlombok:lombok:${lombok.version}"
-    annotationProcessor "info.picocli:picocli-codegen:${picocli.version}"
-    generateConfig "info.picocli:picocli-codegen:${picocli.version}"
-}
-
-dependencies {
-    testImplementation "org.codehaus.groovy:groovy:${groovy.version}"
-    testImplementation platform("org.spockframework:spock-bom:${spock.version}")
+    testImplementation "org.codehaus.groovy:groovy:${groovyVersion}"
+    testImplementation platform("org.spockframework:spock-bom:${spockVersion}")
     testImplementation "org.spockframework:spock-core"
 }
 
@@ -45,29 +60,85 @@ test {
     }
 }
 
-plugins {
-    id 'java'
-    id 'groovy'
-    id 'org.asciidoctor.jvm.convert'
-    id 'com.palantir.graal' version '0.6.0'
+application {
+    mainClass.set("$mainClassFqn")
+}
+
+jar {
+    manifest {
+        attributes "Main-Class": application.mainClass.get()
+    }
+}
+
+task fatJar(type: Jar) {
+    manifest {
+        attributes "Main-Class": application.mainClass.get()
+    }
+    archiveClassifier.set('')
+    from sourceSets.main.output
+    dependsOn configurations.runtimeClasspath
+    from {
+        configurations.runtimeClasspath.findAll { it.name.endsWith('jar') }.collect { zipTree(it) }
+    }
 }
 
 task generateManpageAsciiDoc(type: JavaExec) {
     dependsOn(classes)
     group = "Documentation"
     description = "Generate AsciiDoc manpage"
-    classpath(configurations.compile, configurations.annotationProcessor, sourceSets.main.runtimeClasspath)
-    main 'picocli.codegen.docgen.manpage.ManPageGenerator'
-    args mainClassName, "--outdir=${project.dir}/generated-picocli-docs", "-v"
+    classpath(configurations.compileClasspath, configurations.annotationProcessor, sourceSets.main.runtimeClasspath)
+    mainClass.set('picocli.codegen.docgen.manpage.ManPageGenerator')
+    args application.mainClass.get(), "--outdir=${project.buildDir}/generated-picocli-docs", "-v"
 }
+
+task copyResources(type: Copy) {
+    from ("src/main/asciidoc") {
+        include '**/*.css'
+    }
+    into("${rootDir}/gh-pages")
+}
+asciidoctor.dependsOn copyResources
 
 apply plugin: 'org.asciidoctor.jvm.convert'
 asciidoctor {
     dependsOn(generateManpageAsciiDoc)
+    sourceDir = file("${rootDir}/src/main/asciidoc")
+    outputDir = file("${rootDir}/gh-pages")
+    logDocuments = true
+    attributes([
+        generateddocs: "${project.buildDir}/generated-picocli-docs"
+    ])
+    outputOptions {
+        backends = ['html5']
+    }
+}
+asciidoctor {
+    dependsOn(generateManpageAsciiDoc)
     sourceDir = file("${project.buildDir}/generated-picocli-docs")
-    outputDir = file("${project.dir}/gh-pages")
+    outputDir = file("${rootDir}/gh-pages/manpages")
     logDocuments = true
     outputOptions {
-        backends = ['manpage', 'html5']
+        backends = ['manpage']
+    }
+}
+assemble.dependsOn(asciidoctor)
+
+build.finalizedBy(fatJar)
+
+graal {
+    mainClass application.mainClass.get()
+    outputName "$nativeImageOutputName"
+    graalVersion "21.2.0"
+    javaVersion "$sourceCompatibility"
+    option '-H:+ReportExceptionStackTraces'
+    option '--allow-incomplete-classpath'
+    if (DefaultNativePlatform.currentOperatingSystem.isLinux()) {
+        option '--static'
+    }
+}
+
+tasks {
+    nativeImage {
+        dependsOn(fatJar)
     }
 }

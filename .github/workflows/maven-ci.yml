@@ -32,10 +32,11 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      - name: Setup Java and Maven
+      - name: Setup Java
         uses: actions/setup-java@v1
         with:
           java-version: 11
+          distribution: 'adopt'
       - name: Set GraalVM and Native Image
         uses: ayltai/setup-graalvm@v1
         with:
@@ -48,11 +49,13 @@ jobs:
           BUILD_VERSION=$(./mvnw help:evaluate -Dexpression=project.version -q -D forceStdout | tail -1 | tr -d '\r\n')
           [[ "$BUILD_VERSION" != *"-SNAPSHOT" ]] && BUILD_VERSION="${BUILD_VERSION}-SNAPSHOT" && ./mvnw --batch-mode org.codehaus.mojo:versions-maven-plugin:2.8.1:versions:set -D generateBackupPoms=false -D updateMatchingVersions=false -D processAllModules=true -D newVersion=$BUILD_VERSION || true
       - name: Build Maven Project
-        if: success() && (github.event_name == 'pull_request' || (github.event_name == 'push' && matrix.java != '8'))
+        if: success() && (github.event_name == 'pull_request' || (github.event_name == 'push'))
         run: ./mvnw --batch-mode install -D ci.build -D native.image
       - name: Smoke Test
         if: success()
-        run: ./run.sh help
+        run: |
+          java -jar target/java-cli-template-*.jar --help
+          ./target/app --help
       - name: Publish Github Pages
         if: success()
         continue-on-error: true

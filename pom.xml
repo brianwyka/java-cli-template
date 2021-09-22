@@ -105,6 +105,24 @@
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>gradle.properties</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <version>3.0.0</version>
                 <executions>
@@ -195,6 +213,7 @@
                         <configuration>
                             <attributes>
                                 <source-highlighter>coderay</source-highlighter>
+                                <generateddocs>../../../target/generated-docs</generateddocs>
                             </attributes>
                             <backend>html5</backend>
                             <sourceDirectory>${project.basedir}/src/main/asciidoc</sourceDirectory>

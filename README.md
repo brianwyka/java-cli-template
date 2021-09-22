@@ -14,7 +14,7 @@ bootstrapping the CLI execution.
 
 #### Gradle
 ```sh
-./gradlew clean build # TODO
+./gradlew clean build
 ```
 
 ### With Native Image
@@ -26,7 +26,7 @@ bootstrapping the CLI execution.
 
 #### Gradle
 ```sh
-./gradlew clean build -D native.image # TODO
+./gradlew clean build nativeImage
 ```
 
 #### Native Image Prerequisites
@@ -34,10 +34,14 @@ bootstrapping the CLI execution.
 - GraalVM CE `native-image`
 - `zlib` / `xcode`
 
-##### Auto Setup
+##### GraalVM Installation
+Maven will require that GraalVM be installed separately.
+
 ```sh
-./setup.sh
+./install-graalvm.sh
 ```
+
+If you are using Gradle, you do not need to perform this installation.
 
 ##### GraalVM and Native Image Installation Instructions
 - Getting Started
@@ -48,19 +52,34 @@ bootstrapping the CLI execution.
 
 ## Run The Application
 
-### Print Help and usage
-```sh
-./run.sh --help
-./run.sh hello-world --help
-```
-### Usage
+### Built With Maven
 
-Hello World!
+#### Executable JAR
 ```sh
-./run.sh hello-world
+java -jar target/*-shaded.jar --help
+java -jar target/*-shaded.jar hello-world
+java -jar target/*-shaded.jar hello-world Brian
 ```
 
-Hello {name}!
+#### Native Image
 ```sh
-./run.sh hello-world Brian
+./target/app --help
+./target/app hello-world
+./target/app hello-world Brian
+```
+
+### Built With Gradle
+
+#### Executable JAR
+```sh
+java -jar build/libs/*-all.jar --help
+java -jar build/libs/*-all.jar hello-world
+java -jar build/libs/*-all.jar hello-world Brian
+```
+
+#### Native Image
+```sh
+./build/graal/app --help
+./build/graal/app hello-world
+./build/graal/app hello-world Brian
 ```

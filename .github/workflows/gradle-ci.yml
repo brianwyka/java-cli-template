@@ -1,0 +1,65 @@
+name: Maven CI
+on:
+  push:
+    branches:
+      - main
+      - 'releases/[1-9]+.[0-9]+.x'
+    paths-ignore:
+      - '.github/**'
+      - '.gitignore'
+      - 'CONTRIBUTING.md'
+      - 'LICENSE'
+      - '**/README.md'
+  pull_request:
+    branches:
+      - main
+      - 'releases/[1-9]+.[0-9]+.x'
+    paths-ignore:
+      - '.github/**'
+      - '.gitignore'
+      - 'CONTRIBUTING.md'
+      - 'LICENSE'
+      - '**/README.md'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v2
+      - name: Setup Gradle Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Setup Java
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+          distribution: 'adopt'
+      - name: Set GraalVM and Native Image
+        uses: ayltai/setup-graalvm@v1
+        with:
+          java-version: 11
+          graalvm-version: 21.2.0
+          native-image: true
+      - name: Evaluate Gradle Project Version
+        id: eval-gradle-project-version
+        shell: bash
+        run: |
+          BUILD_VERSION=$(./gradlew properties -q | grep "version:" | awk '{print $2}' | tail -1 | tr -d '\r\n')
+          [[ "$BUILD_VERSION" != *"-SNAPSHOT" ]] && BUILD_VERSION="${BUILD_VERSION}-SNAPSHOT" && ./gradlew -D newVersion=$BUILD_VERSION ||
+          echo "::set-output name=BUILD_VERSION::$BUILD_VERSION"
+      - name: Build Gradle Project
+        if: success() && (github.event_name == 'pull_request' || (github.event_name == 'push'))
+        run: ./gradlew -Pversion="$BUILD_VERSION" build nativeImage
+        env:
+          BUILD_VERSION: ${{ steps.eval-gradle-project-version.outputs.BUILD_VERSION }}
+      - name: Smoke Test
+        if: success()
+        run: |
+          java -jar build/libs/java-cli-template-*.jar --help
+          ./build/graal/app --help

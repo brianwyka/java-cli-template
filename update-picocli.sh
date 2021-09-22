@@ -14,6 +14,7 @@ set -e
 VERSION=$(curl -sI https://github.com/remkop/picocli/releases/latest | grep -i location: | awk -F"/" '{ printf "%s", $NF }' | tr -d 'v' | tr -d '\r\n')
 
 # Global Variables
+OS=$(uname -s | tr '[:upper:]' '[:lower:]')
 DIR="$( cd "$( dirname "$( dirname "${BASH_SOURCE[0]}" )")" && pwd )"
 ROOT_DIR="$( cd "$( dirname "$( dirname "$( dirname "${BASH_SOURCE[0]}" )")")" && pwd )"
 BASE_URL="https://raw.githubusercontent.com/remkop/picocli"
@@ -27,15 +28,26 @@ SOURCE_FILE_PATH="$DIR/$RELATIVE_SOURCE_FILE_PATH"
 curl -ksf "$LICENSE_URL" > "$LICENSE_FILE_PATH"
 curl -ksf "$SOURCE_URL" > "$SOURCE_FILE_PATH"
 
-# Add some warning suppression to the java source file
-sed -i 's/public\sclass\sCommandLine/@SuppressWarnings({"rawtypes", "deprecation" })\npublic class CommandLine/g' "$SOURCE_FILE_PATH"
+if [[ "$OS" == "linux" ]]
+then
 
-# Replace the version in pom.xml file for plugin references
-sed -i "s/<picocli.version>[-[:alnum:]./]\{1,\}<\/picocli.version>/<picocli.version>$VERSION<\/picocli.version>/" "$DIR/pom.xml"
+  # Add some warning suppression to the java source file
+  sed -i 's/public\sclass\sCommandLine/@SuppressWarnings({"rawtypes", "deprecation" })\npublic class CommandLine/g' "$SOURCE_FILE_PATH"
 
-# TODO: mac and gradle
+  # Replace the version in build files
+   sed -i "s/<picocli.version>[-[:alnum:]./]\{1,\}<\/picocli.version>/<picocli.version>$VERSION<\/picocli.version>/" "$DIR/pom.xml"
+   sed -i "/picocliVersion( )?=( )?/ s/=.*/= $VERSION/" gradle.properties
 
-# Remove TODOs so not highlighted in editor
-sed -i 's/TODO/TIDO/g' "$SOURCE_FILE_PATH"
+   # Remove TODOs so not highlighted in editor
+   sed -i 's/TODO/TIDO/g' "$SOURCE_FILE_PATH"
+
+elif [[ "$OS" == "darwin" ]]
+then
+
+  echo "TODO: mac"
+
+else
+  die
+fi
 
 echo "Picocli updated to version: $VERSION"
