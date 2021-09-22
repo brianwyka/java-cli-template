@@ -1,4 +1,4 @@
-name: Maven CI
+name: Gradle CI
 on:
   push:
     branches:
@@ -36,16 +36,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
       - name: Setup Java
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v2
         with:
           java-version: 11
           distribution: 'adopt'
-      - name: Set GraalVM and Native Image
-        uses: ayltai/setup-graalvm@v1
-        with:
-          java-version: 11
-          graalvm-version: 21.2.0
-          native-image: true
       - name: Evaluate Gradle Project Version
         id: eval-gradle-project-version
         shell: bash
