@@ -3,6 +3,8 @@
 This is a template repository for building CLI applications with Java.  It leverages Picocli for 
 bootstrapping the CLI execution.
 
+**Java Version**: 11
+
 ## Compile and Run Tests
 
 ### Without Native Image
@@ -72,9 +74,9 @@ java -jar target/*-shaded.jar hello-world Brian
 
 #### Executable JAR
 ```sh
-java -jar build/libs/*-all.jar --help
-java -jar build/libs/*-all.jar hello-world
-java -jar build/libs/*-all.jar hello-world Brian
+java -jar build/libs/java-cli-template-*.jar --help
+java -jar build/libs/java-cli-template-*.jar hello-world
+java -jar build/libs/java-cli-template-*.jar hello-world Brian
 ```
 
 #### Native Image
