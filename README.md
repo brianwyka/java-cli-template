@@ -1,49 +1,85 @@
-# Java Maven CLI Template
+# Java CLI Template
 
-This is a template repository for building Picocli CLI applications with Java built with Maven.
+This is a template repository for building CLI applications with Java.  It leverages Picocli for 
+bootstrapping the CLI execution.
 
 ## Compile and Run Tests
 
 ### Without Native Image
+
+#### Maven
 ```sh
 ./mvnw clean install
 ```
 
+#### Gradle
+```sh
+./gradlew clean build
+```
+
 ### With Native Image
+
+#### Maven
 ```sh
 ./mvnw clean install -D native.image
+```
+
+#### Gradle
+```sh
+./gradlew clean build nativeImage
 ```
 
 #### Native Image Prerequisites
 - GraalVM CE
 - GraalVM CE `native-image`
-- `zlib`
+- `zlib` / `xcode`
 
-##### Auto Setup
+##### GraalVM Installation
+Maven will require that GraalVM be installed separately.
+
 ```sh
-./setup.sh
+./install-graalvm.sh
 ```
 
+If you are using Gradle, you do not need to perform this installation.
+
 ##### GraalVM and Native Image Installation Instructions
-- https://www.graalvm.org/docs/getting-started/linux/
+- Getting Started
+  - https://www.graalvm.org/docs/getting-started/macos/
+  - https://www.graalvm.org/docs/getting-started/linux/
 - https://www.graalvm.org/reference-manual/native-image/#install-native-image
 - https://www.graalvm.org/reference-manual/ruby/Installingzlib/
 
 ## Run The Application
 
-### Print Help and usage
-```sh
-./run.sh --help
-./run.sh hello-world --help
-```
-### Usage
+### Built With Maven
 
-Hello World!
+#### Executable JAR
 ```sh
-./run.sh hello-world
+java -jar target/*-shaded.jar --help
+java -jar target/*-shaded.jar hello-world
+java -jar target/*-shaded.jar hello-world Brian
 ```
 
-Hello {name}!
+#### Native Image
 ```sh
-./run.sh hello-world Brian
+./target/app --help
+./target/app hello-world
+./target/app hello-world Brian
+```
+
+### Built With Gradle
+
+#### Executable JAR
+```sh
+java -jar build/libs/*-all.jar --help
+java -jar build/libs/*-all.jar hello-world
+java -jar build/libs/*-all.jar hello-world Brian
+```
+
+#### Native Image
+```sh
+./build/graal/app --help
+./build/graal/app hello-world
+./build/graal/app hello-world Brian
 ```

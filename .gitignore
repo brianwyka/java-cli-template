@@ -10,6 +10,8 @@
 # Build
 .setup
 target
+build
+.gradle
 
 # Generated
 gh-pages

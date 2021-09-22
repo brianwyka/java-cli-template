@@ -6,19 +6,19 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.github.brianwyka</groupId>
-    <artifactId>java-maven-cli-template</artifactId>
+    <artifactId>java-cli-template</artifactId>
     <version>0.1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>CLI Application</name>
-    <description>Simple CLI Application</description>
+    <name>Java CLI Template</name>
+    <description>Template for Java CLI Application</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>11</java.version>
         <groovy.version>3.0.8</groovy.version>
         <lombok.version>1.18.20</lombok.version>
-        <slf4j.version>1.7.31</slf4j.version>
+        <slf4j.version>1.7.32</slf4j.version>
         <graalvm.version>21.2.0</graalvm.version>
         <picocli.version>4.6.1</picocli.version>
         <main.class>io.github.brianwyka.App</main.class>
@@ -41,7 +41,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.2.4</version>
+            <version>1.2.6</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -103,6 +103,24 @@
             </plugins>
         </pluginManagement>
         <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>properties-maven-plugin</artifactId>
+                <version>1.0.0</version>
+                <executions>
+                    <execution>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>read-project-properties</goal>
+                        </goals>
+                        <configuration>
+                            <files>
+                                <file>gradle.properties</file>
+                            </files>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
@@ -195,6 +213,7 @@
                         <configuration>
                             <attributes>
                                 <source-highlighter>coderay</source-highlighter>
+                                <generateddocs>../../../target/generated-docs</generateddocs>
                             </attributes>
                             <backend>html5</backend>
                             <sourceDirectory>${project.basedir}/src/main/asciidoc</sourceDirectory>
@@ -370,7 +389,35 @@
                         </executions>
                         <configuration>
                             <imageName>${cli.name}</imageName>
-                            <buildArgs>-H:+ReportExceptionStackTraces --allow-incomplete-classpath</buildArgs>
+                            <buildArgs>
+                                <buildArg>-H:+ReportExceptionStackTraces</buildArg>
+                                <buildArg>--allow-incomplete-classpath</buildArg>
+                            </buildArgs>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>native.image.linux</id>
+            <activation>
+                <property>
+                    <name>native.image</name>
+                </property>
+                <os>
+                    <name>Linux</name>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.graalvm.nativeimage</groupId>
+                        <artifactId>native-image-maven-plugin</artifactId>
+                        <version>${graalvm.version}</version>
+                        <configuration>
+                            <buildArgs combine.children="append">
+                                <buildArg>--static</buildArg>
+                            </buildArgs>
                         </configuration>
                     </plugin>
                 </plugins>
