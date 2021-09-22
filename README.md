@@ -1,5 +1,8 @@
 # Java CLI Template
 
+![Maven CI](https://github.com/brianwyka/java-cli-template/actions/workflows/maven-ci.yml/badge.svg) 
+![Gradle CI](https://github.com/brianwyka/java-cli-template/actions/workflows/gradle-ci.yml/badge.svg)
+
 This is a template repository for building CLI applications with Java.  It leverages Picocli for 
 bootstrapping the CLI execution.
 
