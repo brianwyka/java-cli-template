@@ -98,7 +98,7 @@ To allow it to work, some configuration needs to be done.
 ```sh
 ./app reflect java.lang.String
 ```
-This is because it is configured in `reflect-config.json`.
+This is because it has been configured in `reflect-config.json`.
 
 ### Does not Work
 ```sh
