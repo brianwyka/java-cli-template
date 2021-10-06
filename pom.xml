@@ -140,6 +140,7 @@
                                 <argument>--outdir=${project.build.directory}/generated-docs</argument>
                                 <argument>${main.class}</argument>
                                 <argument>io.github.brianwyka.command.HelloWorld</argument>
+                                <argument>io.github.brianwyka.command.Reflect</argument>
                             </arguments>
                         </configuration>
                     </execution>
