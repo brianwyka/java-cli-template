@@ -88,3 +88,20 @@ java -jar build/libs/java-cli-template-*.jar hello-world Brian
 ./build/graal/app hello-world
 ./build/graal/app hello-world Brian
 ```
+
+## Demonstrating Reflection in Native Image
+
+Runtime reflection in a native image is tricky.  
+To allow it to work, some configuration needs to be done.
+
+### Works
+```sh
+./app reflect java.lang.String
+```
+This is because it is configured in `reflect-config.json`.
+
+### Does not Work
+```sh
+./app reflect java.util.List
+```
+This is because it is not included in `reflect-config.json`

@@ -1,3 +1,11 @@
 [
-
+  {
+    "name" : "java.lang.String",
+    "allDeclaredConstructors" : true,
+    "allPublicConstructors" : false,
+    "allDeclaredMethods" : false,
+    "allPublicMethods" : false,
+    "allDeclaredClasses" : false,
+    "allPublicClasses" : false
+  }
 ]
