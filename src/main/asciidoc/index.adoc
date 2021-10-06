@@ -28,3 +28,7 @@ include::{generateddocs}/app.adoc[leveloffset=2,tag=picocli-generated-full-manpa
 include::{generateddocs}/app-hello-world.adoc[leveloffset=2,tag=picocli-generated-full-manpage]
 
 '''
+
+include::{generateddocs}/app-reflect.adoc[leveloffset=2,tag=picocli-generated-full-manpage]
+
+'''
