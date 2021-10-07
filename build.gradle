@@ -74,7 +74,7 @@ task fatJar(type: Jar) {
     manifest {
         attributes "Main-Class": application.mainClass.get()
     }
-    archiveClassifier.set('')
+    archiveClassifier.set('') // Overwrites original JAR
     from sourceSets.main.output
     dependsOn configurations.runtimeClasspath
     from {

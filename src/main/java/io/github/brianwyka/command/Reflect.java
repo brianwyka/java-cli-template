@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 
 /**
- * A command which is used for monitoring HTTP access log files
+ * A command which is used for creating classes usig Reflection
  *
  * @author brianwyka
  */
@@ -20,10 +20,10 @@ import picocli.CommandLine;
 )
 public class Reflect implements Callable<Integer> {
 
-    private static final Logger ERR = LoggerFactory.getLogger("");
+    private static final Logger ERR = LoggerFactory.getLogger(""); // Root Logger
 
     /**
-     * The HTTP access log file path parameter
+     * The class name
      */
     @CommandLine.Parameters(
             index = "0",
@@ -32,7 +32,7 @@ public class Reflect implements Callable<Integer> {
             defaultValue = "java.lang.String",
             showDefaultValue = CommandLine.Help.Visibility.ALWAYS
     )
-    private String name;
+    private String className;
 
     /**
      * Bootstrap the command
@@ -52,10 +52,10 @@ public class Reflect implements Callable<Integer> {
     @Override
     public Integer call() {
         try {
-            Class.forName(name).getConstructor().newInstance();
-            log.error("Successfully instantiated class {} with reflection", name);
+            Class.forName(className).getConstructor().newInstance();
+            log.error("Successfully instantiated class {} with reflection", className);
         } catch (final Exception e) {
-            log.error("Error instantiating class {} with reflection", name);
+            log.error("Error instantiating class {} with reflection", className);
             ERR.error("Try adding the class to reflect-config.json");
             return CommandLine.ExitCode.SOFTWARE;
         }

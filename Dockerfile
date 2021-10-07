@@ -5,7 +5,7 @@ FROM ghcr.io/graalvm/graalvm-ce:java11-21.2.0 AS builder
 RUN gu install native-image
 
 # Add the built JAR
-ARG JAR="target/java-cli-template-*-shaded.jar"
+ARG JAR="target/java-cli-template-*.jar"
 #ARG JAR="build/libs/java-cli-template-*.jar"
 ADD ${JAR} /build/app.jar
 

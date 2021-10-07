@@ -8,7 +8,7 @@ import lombok.val;
 import picocli.CommandLine;
 
 /**
- * A command which is used for monitoring HTTP access log files
+ * A command which is used for printing Hello World messages
  *
  * @author brianwyka
  */
@@ -21,7 +21,7 @@ import picocli.CommandLine;
 public class HelloWorld implements Callable<Integer> {
 
     /**
-     * The HTTP access log file path parameter
+     * The person's name
      */
     @CommandLine.Parameters(
             index = "0",

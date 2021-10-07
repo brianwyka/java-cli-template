@@ -50,7 +50,7 @@ jobs:
           [[ "$BUILD_VERSION" != *"-SNAPSHOT" ]] && BUILD_VERSION="${BUILD_VERSION}-SNAPSHOT" && ./mvnw --batch-mode org.codehaus.mojo:versions-maven-plugin:2.8.1:versions:set -D generateBackupPoms=false -D updateMatchingVersions=false -D processAllModules=true -D newVersion=$BUILD_VERSION || true
       - name: Build Maven Project
         if: success() && (github.event_name == 'pull_request' || (github.event_name == 'push'))
-        run: ./mvnw --batch-mode install -D ci.build -D native.image
+        run: ./mvnw --batch-mode install -D ci.build -D nativeImage
       - name: Smoke Test
         if: success()
         run: |

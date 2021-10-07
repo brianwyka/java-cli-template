@@ -14,17 +14,17 @@ a native image executable.
 ## Build
 
 ### Maven
-For the `native-image` build, see instructions at bottom.
+For the `native-image` build, see instructions at bottom for tooling pre-requisites.
 
 ```sh
 ./mvnw clean install # Build executable JAR
-./mvnw clean install -D native.image # Build native image
+./mvnw clean install -D nativeImage # Build native image
 ```
 
 ### Gradle
 ```sh
 ./gradlew clean build # Build executable JAR
-./gradlew clean build nativeImage # Build native image
+./gradlew clean nativeImage # Build native image
 ```
 
 ### Docker
@@ -37,7 +37,7 @@ docker build -t java-cli-template .
 
 To use the gradle build output:
 ```sh
-docker build -t java-cli-template --build-arg "JAR=build/libs/java-cli-template-*.jar" .
+docker build -t java-cli-template --build-arg "JAR=build/libs/*.jar" .
 ```
 
 ## Run
@@ -46,9 +46,9 @@ docker build -t java-cli-template --build-arg "JAR=build/libs/java-cli-template-
 
 #### Executable JAR
 ```sh
-java -jar target/*-shaded.jar --help
-java -jar target/*-shaded.jar hello-world
-java -jar target/*-shaded.jar hello-world Brian
+java -jar target/java-cli-template-*.jar --help
+java -jar target/java-cli-template-*.jar hello-world
+java -jar target/java-cli-template-*.jar hello-world Brian
 ```
 
 #### Native Image

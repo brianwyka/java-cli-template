@@ -337,8 +337,7 @@
                         </goals>
                         <phase>package</phase>
                         <configuration>
-                            <shadedArtifactAttached>true</shadedArtifactAttached>
-                            <dependencyReducedPomLocation>${project.build.directory}</dependencyReducedPomLocation>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
                             <filters>
                                 <filter>
                                     <artifact>*:*</artifact>
@@ -371,7 +370,7 @@
             <id>native.image</id>
             <activation>
                 <property>
-                    <name>native.image</name>
+                    <name>nativeImage</name>
                 </property>
             </activation>
             <build>
@@ -403,7 +402,7 @@
             <id>native.image.linux</id>
             <activation>
                 <property>
-                    <name>native.image</name>
+                    <name>nativeImage</name>
                 </property>
                 <os>
                     <name>Linux</name>
