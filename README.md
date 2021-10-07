@@ -14,7 +14,8 @@ a native image executable.
 ## Build
 
 ### Maven
-For the `native-image` build, see instructions at bottom for tooling pre-requisites.
+For the `native-image` build, see instructions at bottom for tooling pre-requisites.  Your 
+`JAVA_HOME` will need to be set with `GraalVM` installation.
 
 ```sh
 ./mvnw clean install # Build executable JAR
@@ -37,7 +38,7 @@ docker build -t java-cli-template .
 
 To use the gradle build output:
 ```sh
-docker build -t java-cli-template --build-arg "JAR=build/libs/*.jar" .
+docker build -t java-cli-template --build-arg "JAR=build/libs/java-cli-template-*.jar" .
 ```
 
 ## Run
@@ -49,6 +50,7 @@ docker build -t java-cli-template --build-arg "JAR=build/libs/*.jar" .
 java -jar target/java-cli-template-*.jar --help
 java -jar target/java-cli-template-*.jar hello-world
 java -jar target/java-cli-template-*.jar hello-world Brian
+echo "Brian" | java -jar target/java-cli-template-*.jar hello-world -
 ```
 
 #### Native Image
@@ -66,6 +68,7 @@ echo "Brian" | ./target/app hello-world -
 java -jar build/libs/java-cli-template-*.jar --help
 java -jar build/libs/java-cli-template-*.jar hello-world
 java -jar build/libs/java-cli-template-*.jar hello-world Brian
+echo "Brian" | java -jar build/libs/java-cli-template-*.jar hello-world -
 ```
 
 #### Native Image
@@ -81,6 +84,7 @@ echo "Brian" | ./build/graal/app hello-world -
 docker run java-cli-template --help
 docker run java-cli-template hello-world
 docker run java-cli-template hello-world Brian
+echo "Brian" | docker run -i java-cli-template hello-world -
 ```
 
 ## Reflection in Native Image
