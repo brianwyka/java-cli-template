@@ -1,5 +1,7 @@
 package io.github.brianwyka.command;
 
+import java.io.InputStreamReader;
+import java.util.Scanner;
 import java.util.concurrent.Callable;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -24,7 +26,7 @@ public class HelloWorld implements Callable<Integer> {
     @CommandLine.Parameters(
             index = "0",
             arity = "0..1",
-            description = "The name of the person to say hello to",
+            description = "The name of the person to say hello to, specify '-' to use stdin",
             showDefaultValue = CommandLine.Help.Visibility.ALWAYS
     )
     private String name;
@@ -46,7 +48,13 @@ public class HelloWorld implements Callable<Integer> {
      */
     @Override
     public Integer call() {
-        if (name != null && !name.isBlank()) {
+        if ("-".equals(name)) {
+            try (val scanner = new Scanner(System.in)) {
+                while (scanner.hasNext()) {
+                    log.info("Hello {}!", scanner.nextLine());
+                }
+            }
+        } else if (name != null && !name.isBlank()) {
             log.info("Hello {}!", name);
         } else {
             log.info("Hello World!");
