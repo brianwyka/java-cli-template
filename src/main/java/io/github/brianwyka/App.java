@@ -1,6 +1,8 @@
 package io.github.brianwyka;
 
+import io.github.brianwyka.command.Add;
 import io.github.brianwyka.command.HelloWorld;
+import io.github.brianwyka.command.Http;
 import io.github.brianwyka.command.Reflect;
 import lombok.val;
 import picocli.CommandLine;
@@ -20,7 +22,9 @@ import picocli.CommandLine;
         subcommands = {
                 CommandLine.HelpCommand.class,
                 HelloWorld.class,
-                Reflect.class
+                Reflect.class,
+                Add.class,
+                Http.class
         }
 )
 public class App {

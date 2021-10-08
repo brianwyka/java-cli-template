@@ -7,5 +7,14 @@
     "allPublicMethods" : false,
     "allDeclaredClasses" : false,
     "allPublicClasses" : false
+  },
+  {
+    "name" : "java.util.ArrayList",
+  "allDeclaredConstructors" : true,
+  "allPublicConstructors" : false,
+  "allDeclaredMethods" : false,
+  "allPublicMethods" : false,
+  "allDeclaredClasses" : false,
+  "allPublicClasses" : false
   }
 ]
