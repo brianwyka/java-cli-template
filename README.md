@@ -8,8 +8,8 @@ This is a template repository for building CLI applications with Java.  It lever
 [GraalVM native-image](https://www.graalvm.org/reference-manual/native-image/) for building 
 a native image executable.
 
-* **JDK Version**: `11`
-* **GraalVM Version**: `21.2.0` 
+* **JDK Version**: `17`
+* **GraalVM Version**: `21.3.0` 
 
 ## Build
 
