@@ -22,13 +22,13 @@ plugins {
 apply plugin: 'org.asciidoctor.jvm.convert'
 
 wrapper {
-    gradleVersion = '7.2'
+    gradleVersion = '7.3-rc-5'
 }
 
 group 'io.github.brianwyka'
 
-sourceCompatibility = JavaVersion.VERSION_11
-targetCompatibility = JavaVersion.VERSION_11
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
 
 repositories {
     mavenLocal()
@@ -128,7 +128,7 @@ build.finalizedBy(fatJar)
 graal {
     mainClass application.mainClass.get()
     outputName "$nativeImageOutputName"
-    graalVersion "21.2.0"
+    graalVersion "21.3.0"
     javaVersion "$sourceCompatibility"
     option '-H:+ReportExceptionStackTraces'
     option '--allow-incomplete-classpath'

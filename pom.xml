@@ -15,11 +15,11 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>11</java.version>
-        <groovy.version>3.0.8</groovy.version>
+        <java.version>17</java.version>
+        <groovy.version>3.0.9</groovy.version>
         <lombok.version>1.18.20</lombok.version>
         <slf4j.version>1.7.32</slf4j.version>
-        <graalvm.version>21.2.0</graalvm.version>
+        <graalvm.version>21.3.0</graalvm.version>
         <picocli.version>4.6.1</picocli.version>
         <main.class>io.github.brianwyka.App</main.class>
         <cli.name>app</cli.name>
