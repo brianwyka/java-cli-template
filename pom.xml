@@ -15,11 +15,11 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.version>11</java.version>
-        <groovy.version>3.0.8</groovy.version>
+        <java.version>17</java.version>
+        <groovy.version>3.0.9</groovy.version>
         <lombok.version>1.18.20</lombok.version>
         <slf4j.version>1.7.32</slf4j.version>
-        <graalvm.version>21.2.0</graalvm.version>
+        <graalvm.version>21.3.0</graalvm.version>
         <picocli.version>4.6.1</picocli.version>
         <main.class>io.github.brianwyka.App</main.class>
         <cli.name>app</cli.name>
@@ -99,6 +99,11 @@
                             <include>**/*Spec.class</include>
                         </includes>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.graalvm.buildtools</groupId>
+                    <artifactId>native-maven-plugin</artifactId>
+                    <version>0.9.7.1</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -247,7 +252,7 @@
             <plugin>
                 <groupId>org.codehaus.gmavenplus</groupId>
                 <artifactId>gmavenplus-plugin</artifactId>
-                <version>1.12.1</version>
+                <version>1.13.0</version>
                 <configuration>
                     <parallelParsing>true</parallelParsing>
                     <testSources>
@@ -376,13 +381,12 @@
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>org.graalvm.nativeimage</groupId>
-                        <artifactId>native-image-maven-plugin</artifactId>
-                        <version>${graalvm.version}</version>
+                        <groupId>org.graalvm.buildtools</groupId>
+                        <artifactId>native-maven-plugin</artifactId>
                         <executions>
                             <execution>
                                 <goals>
-                                    <goal>native-image</goal>
+                                    <goal>build</goal>
                                 </goals>
                                 <phase>package</phase>
                             </execution>
@@ -411,9 +415,8 @@
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>org.graalvm.nativeimage</groupId>
-                        <artifactId>native-image-maven-plugin</artifactId>
-                        <version>${graalvm.version}</version>
+                        <groupId>org.graalvm.buildtools</groupId>
+                        <artifactId>native-maven-plugin</artifactId>
                         <configuration>
                             <buildArgs combine.children="append">
                                 <buildArg>--static</buildArg>

@@ -1,5 +1,5 @@
 # Stage 0: Build the Native Image
-FROM ghcr.io/graalvm/graalvm-ce:java11-21.2.0 AS builder
+FROM ghcr.io/graalvm/graalvm-ce:java17-21.3.0 AS builder
 
 # Install native-image tooling
 RUN gu install native-image

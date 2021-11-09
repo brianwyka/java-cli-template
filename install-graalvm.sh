@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 OS=$(uname -s | tr '[:upper:]' '[:lower:]')
 
 die() {
@@ -15,14 +17,14 @@ then
   sudo apt install libz-dev
 elif [[ "$OS" == "darwin" ]]
 then
-  xcode-select --install
+  xcode-select --install || true
 else
-  die
+  die "Unsupported operating system: [$OS]"
 fi
 
 # Install GraalVM
-JAVA_VERSION="11"
-GRAALVM_VERSION="21.2.0"
+JAVA_VERSION="17"
+GRAALVM_VERSION="21.3.0"
 BUILD_NAME="graalvm-ce-java$JAVA_VERSION-$GRAALVM_VERSION"
 FILE_NAME="graalvm-ce-java$JAVA_VERSION-$OS-amd64-$GRAALVM_VERSION.tar.gz"
 
@@ -70,9 +72,9 @@ then
     else
       echo "Skipping GraalVM install"
     fi
-else
-  die
 fi
+
+# TODO: install native-image
 
 ## Show User Further Instructions
 echo "Please complete the following manual tasks:"
