@@ -29,12 +29,6 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.graalvm.sdk</groupId>
             <artifactId>graal-sdk</artifactId>
             <version>${graalvm.version}</version>
@@ -80,11 +74,6 @@
                         <showWarnings>true</showWarnings>
                         <useIncrementalCompilation>true</useIncrementalCompilation>
                         <annotationProcessorPaths>
-                            <path>
-                                <groupId>org.projectlombok</groupId>
-                                <artifactId>lombok</artifactId>
-                                <version>${lombok.version}</version>
-                            </path>
                             <path>
                                 <groupId>info.picocli</groupId>
                                 <artifactId>picocli-codegen</artifactId>
@@ -316,7 +305,7 @@
                                         <limit>
                                             <counter>INSTRUCTION</counter>
                                             <value>COVEREDRATIO</value>
-                                            <minimum>0.00</minimum> <!-- FIXME: increase coverage ratio -->
+                                            <minimum>0.90</minimum>
                                         </limit>
                                     </limits>
                                 </rule>

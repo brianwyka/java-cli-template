@@ -1,10 +1,9 @@
 package io.github.brianwyka.command;
 
-import java.io.InputStreamReader;
 import java.util.Scanner;
 import java.util.concurrent.Callable;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
 
 /**
@@ -12,13 +11,14 @@ import picocli.CommandLine;
  *
  * @author brianwyka
  */
-@Slf4j(topic = "OUT")
 @CommandLine.Command(
         name = "hello-world",
         description = "Print out Hello World",
         mixinStandardHelpOptions = true
 )
 public class HelloWorld implements Callable<Integer> {
+
+    private static final Logger OUT = LoggerFactory.getLogger("OUT");
 
     /**
      * The person's name
@@ -37,7 +37,7 @@ public class HelloWorld implements Callable<Integer> {
      * @param args the command line args
      */
     public static void main(final String... args) {
-        val status = new CommandLine(new HelloWorld()).setTrimQuotes(true).execute(args);
+        final var status = new CommandLine(new HelloWorld()).setTrimQuotes(true).execute(args);
         Runtime.getRuntime().halt(status);
     }
 
@@ -49,15 +49,15 @@ public class HelloWorld implements Callable<Integer> {
     @Override
     public Integer call() {
         if ("-".equals(name)) {
-            try (val scanner = new Scanner(System.in)) {
+            try (final var scanner = new Scanner(System.in)) {
                 while (scanner.hasNext()) {
-                    log.info("Hello {}!", scanner.nextLine());
+                    OUT.info("Hello {}!", scanner.nextLine());
                 }
             }
         } else if (name != null && !name.isBlank()) {
-            log.info("Hello {}!", name);
+            OUT.info("Hello {}!", name);
         } else {
-            log.info("Hello World!");
+            OUT.info("Hello World!");
         }
         return CommandLine.ExitCode.OK;
     }

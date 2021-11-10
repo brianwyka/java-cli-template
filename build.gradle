@@ -15,7 +15,9 @@ buildscript {
 plugins {
     id 'application'
     id 'java'
+    id 'jacoco'
     id 'groovy'
+    id 'idea'
     id 'org.asciidoctor.jvm.convert'
     id 'com.palantir.graal'
 }
@@ -36,16 +38,14 @@ repositories {
 }
 
 dependencies {
-    compileOnly "org.projectlombok:lombok:${lombokVersion}"
-    runtimeOnly "ch.qos.logback:logback-classic:${logbackVersion}"
-    implementation "org.slf4j:slf4j-api:${slf4jVersion}"
-    annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
-    annotationProcessor "info.picocli:picocli-codegen:${picocliVersion}"
+    runtimeOnly "ch.qos.logback:logback-classic:$logbackVersion"
+    implementation "org.slf4j:slf4j-api:$slf4jVersion"
+    annotationProcessor "info.picocli:picocli-codegen:$picocliVersion"
 }
 
 dependencies {
-    testImplementation "org.codehaus.groovy:groovy:${groovyVersion}"
-    testImplementation platform("org.spockframework:spock-bom:${spockVersion}")
+    testImplementation "org.codehaus.groovy:groovy:$groovyVersion"
+    testImplementation platform("org.spockframework:spock-bom:$spockVersion")
     testImplementation "org.spockframework:spock-core"
 }
 
@@ -53,11 +53,32 @@ compileJava {
     options.compilerArgs += ["-Aproject=${project.group}/${project.name}"]
 }
 
+// Jacoco Integration
+jacocoTestReport {
+    dependsOn test
+}
+jacoco {
+    toolVersion = "$jacocoVersion"
+}
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                counter = 'INSTRUCTION'
+                value = 'COVEREDRATIO'
+                minimum = 0.90 // 90%
+            }
+        }
+    }
+}
+check.dependsOn jacocoTestCoverageVerification
+
 test {
     useJUnitPlatform()
     testLogging {
         events "passed", "skipped", "failed"
     }
+    finalizedBy jacocoTestReport
 }
 
 application {
@@ -70,7 +91,7 @@ jar {
     }
 }
 
-task fatJar(type: Jar) {
+task uberJar(type: Jar) {
     manifest {
         attributes "Main-Class": application.mainClass.get()
     }
@@ -123,7 +144,7 @@ asciidoctor {
 }
 assemble.dependsOn(asciidoctor)
 
-build.finalizedBy(fatJar)
+build.finalizedBy(uberJar)
 
 graal {
     mainClass application.mainClass.get()
@@ -139,6 +160,6 @@ graal {
 
 tasks {
     nativeImage {
-        dependsOn(fatJar)
+        dependsOn(uberJar)
     }
 }

@@ -2,7 +2,6 @@ package io.github.brianwyka;
 
 import io.github.brianwyka.command.HelloWorld;
 import io.github.brianwyka.command.Reflect;
-import lombok.val;
 import picocli.CommandLine;
 
 /**
@@ -31,11 +30,11 @@ public class App {
      * @param args the command line args
      */
     public static void main(final String[] args) {
-        val defaultColorScheme = CommandLine.Help.defaultColorScheme(CommandLine.Help.Ansi.AUTO);
-        val colorScheme = new CommandLine.Help.ColorScheme.Builder(defaultColorScheme)
+        final var defaultColorScheme = CommandLine.Help.defaultColorScheme(CommandLine.Help.Ansi.AUTO);
+        final var colorScheme = new CommandLine.Help.ColorScheme.Builder(defaultColorScheme)
                 .commands(CommandLine.Help.Ansi.Style.bold, CommandLine.Help.Ansi.Style.fg_cyan)
                 .build();
-        val status = new CommandLine(new App())
+        final var status = new CommandLine(new App())
                 .setColorScheme(colorScheme)
                 .execute(args);
         Runtime.getRuntime().halt(status);

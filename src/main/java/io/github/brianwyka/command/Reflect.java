@@ -1,8 +1,6 @@
 package io.github.brianwyka.command;
 
 import java.util.concurrent.Callable;
-import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import picocli.CommandLine;
@@ -12,7 +10,6 @@ import picocli.CommandLine;
  *
  * @author brianwyka
  */
-@Slf4j(topic = "OUT")
 @CommandLine.Command(
         name = "reflect",
         description = "Instantiate a class with reflection",
@@ -20,6 +17,7 @@ import picocli.CommandLine;
 )
 public class Reflect implements Callable<Integer> {
 
+    private static final Logger OUT = LoggerFactory.getLogger("OUT");
     private static final Logger ERR = LoggerFactory.getLogger(""); // Root Logger
 
     /**
@@ -40,7 +38,7 @@ public class Reflect implements Callable<Integer> {
      * @param args the command line args
      */
     public static void main(final String... args) {
-        val status = new CommandLine(new Reflect()).setTrimQuotes(true).execute(args);
+        final var status = new CommandLine(new Reflect()).setTrimQuotes(true).execute(args);
         Runtime.getRuntime().halt(status);
     }
 
@@ -53,9 +51,9 @@ public class Reflect implements Callable<Integer> {
     public Integer call() {
         try {
             Class.forName(className).getConstructor().newInstance();
-            log.error("Successfully instantiated class {} with reflection", className);
+            OUT.error("Successfully instantiated class {} with reflection", className);
         } catch (final Exception e) {
-            log.error("Error instantiating class {} with reflection", className);
+            OUT.error("Error instantiating class {} with reflection", className);
             ERR.error("Try adding the class to reflect-config.json");
             return CommandLine.ExitCode.SOFTWARE;
         }
