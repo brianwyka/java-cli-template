@@ -17,10 +17,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>17</java.version>
         <groovy.version>3.0.9</groovy.version>
-        <lombok.version>1.18.20</lombok.version>
-        <slf4j.version>1.7.32</slf4j.version>
-        <graalvm.version>21.3.0</graalvm.version>
-        <picocli.version>4.6.1</picocli.version>
+        <lombok.version>1.18.22</lombok.version>
+        <slf4j.version>1.7.36</slf4j.version>
+        <logback.version>1.2.10</logback.version>
+        <graalvm.version>22.0.0.2</graalvm.version>
+        <picocli.version>4.6.3</picocli.version>
+        <spock.version>2.1-groovy-3.0</spock.version>
         <main.class>io.github.brianwyka.App</main.class>
         <cli.name>app</cli.name>
     </properties>
@@ -41,7 +43,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.2.6</version>
+            <version>${logback.version}</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
@@ -53,7 +55,7 @@
         <dependency>
             <groupId>org.spockframework</groupId>
             <artifactId>spock-core</artifactId>
-            <version>2.0-groovy-3.0</version>
+            <version>${spock.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

@@ -1,12 +1,13 @@
 # Stage 0: Build the Native Image
-FROM ghcr.io/graalvm/graalvm-ce:java17-21.3.0 AS builder
+FROM ghcr.io/graalvm/native-image:ol8-java17-22.0.0.2-b2 AS builder
 
-# Install native-image tooling
-RUN gu install native-image
+# JAR (Maven)
+ARG JAR="target/java-cli-template-*.jar"
+
+# JAR (Gradle)
+#ARG JAR="build/libs/java-cli-template-*.jar"
 
 # Add the built JAR
-ARG JAR="target/java-cli-template-*.jar"
-#ARG JAR="build/libs/java-cli-template-*.jar"
 ADD ${JAR} /build/app.jar
 
 # Setting up working directory

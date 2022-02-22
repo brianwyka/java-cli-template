@@ -32,25 +32,20 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
-      - name: Setup Java
-        uses: actions/setup-java@v2
+      - name: Setup GraalVM
+        uses: graalvm/setup-graalvm@v1
         with:
+          version: 22.0.0.2
           java-version: 17
-          distribution: 'adopt'
-      - name: Set GraalVM and Native Image
-        uses: ayltai/setup-graalvm@v1
-        with:
-          java-version: 17
-          graalvm-version: 21.3.0
-          native-image: true
+          components: 'native-image'
       - name: Set Maven Project Version
         shell: bash
         run: |
-          BUILD_VERSION=$(./mvnw help:evaluate -Dexpression=project.version -q -D forceStdout | tail -1 | tr -d '\r\n')
-          [[ "$BUILD_VERSION" != *"-SNAPSHOT" ]] && BUILD_VERSION="${BUILD_VERSION}-SNAPSHOT" && ./mvnw --batch-mode org.codehaus.mojo:versions-maven-plugin:2.8.1:versions:set -D generateBackupPoms=false -D updateMatchingVersions=false -D processAllModules=true -D newVersion=$BUILD_VERSION || true
+          BUILD_VERSION=$(./mvnw -D expression=project.version -q -D forceStdout help:evaluate | tail -1 | tr -d '\r\n')
+          [[ "$BUILD_VERSION" != *"-SNAPSHOT" ]] && BUILD_VERSION="${BUILD_VERSION}-SNAPSHOT" && ./mvnw --batch-mode -D generateBackupPoms=false -D updateMatchingVersions=false -D processAllModules=true -D newVersion=$BUILD_VERSION org.codehaus.mojo:versions-maven-plugin:2.9.0:versions:set || true
       - name: Build Maven Project
         if: success() && (github.event_name == 'pull_request' || (github.event_name == 'push'))
-        run: ./mvnw --batch-mode install -D ci.build -D nativeImage
+        run: ./mvnw --batch-mode -D ci.build -D nativeImage install
       - name: Smoke Test
         if: success()
         run: |
@@ -59,7 +54,7 @@ jobs:
       - name: Publish Github Pages
         if: success()
         continue-on-error: true
-        uses: jamesives/github-pages-deploy-action@4.1.5
+        uses: jamesives/github-pages-deploy-action@v4.2.5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: gh-pages
