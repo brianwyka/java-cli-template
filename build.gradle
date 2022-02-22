@@ -63,6 +63,7 @@ jacoco {
 jacocoTestCoverageVerification {
     violationRules {
         rule {
+            excludes = ['**/picocli/**/*.*']
             limit {
                 counter = 'INSTRUCTION'
                 value = 'COVEREDRATIO'

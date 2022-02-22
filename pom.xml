@@ -272,6 +272,7 @@
                 <version>0.8.7</version>
                 <configuration>
                     <excludes>
+                        <exclude>**/picocli/**/*.*</exclude>
                         <exclude>**/*Spec.*</exclude>
                         <exclude>**/*Spec$*.*</exclude>
                     </excludes>
