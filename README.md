@@ -9,7 +9,7 @@ This is a template repository for building CLI applications with Java.  It lever
 a native image executable.
 
 * **JDK Version**: `17`
-* **GraalVM Version**: `22.0.0.2` 
+* **GraalVM Version**: `22.2.0` 
 
 ## Build
 

@@ -1,5 +1,5 @@
 # Stage 0: Build the Native Image
-FROM ghcr.io/graalvm/native-image:ol8-java17-22.0.0.2-b2 AS builder
+FROM ghcr.io/graalvm/native-image:ol8-java17-22.2.0 AS builder
 
 # JAR (Maven)
 ARG JAR="target/java-cli-template-*.jar"
